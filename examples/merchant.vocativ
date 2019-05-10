@@ -1,0 +1,25 @@
+[+]
+-> poor "money == 0"
+-> sell
+
+[poor]
+"Sorry, I don't deal with poor people!"
+
+[sell]
+"What do you want to buy?"
+> "Axe" [buy_axe]
+> "Sword" [buy_sword]
+> "Nothing"
+
+[buy_axe]
+\take_money 1
+\give "axe"
+-> purchased
+
+[buy_sword]
+\take_money 1
+\give "sword"
+-> purchased
+
+[purchased]
+"Thank you for your business!"

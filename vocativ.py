@@ -1,83 +1,75 @@
 #!/usr/bin/env python3
 import json
 import sys
-import re
+import lark
 
-class State:
-    def __init__(self, lines):
-        self.id = lines[0][1:-1]
-
-        self.actions = []
-        for line in lines[1:]:
-            self.actions.append(Action(line))
-
-    def to_json(self):
+class Transformer(lark.Transformer):
+    def start(self, states):
+        return states
+    def state(self, p):
+        id_token, *statements = p
         return {
-            "id": self.id,
-            "actions": [a.to_json() for a in self.actions if a.type != "option"],
-            "options": [a.to_json() for a in self.actions if a.type == "option"]
+            "id": id_token,
+            "actions": [s for s in statements if s["type"] != "option"],
+            "options": [s for s in statements if s["type"] == "option"]
         }
-
-class Action:
-    def __init__(self, line):
-        if line.startswith("::"):
-            self.type = "option"
-            if line.rfind("[") > 0:
-                self.body = line[2:line.rfind("[")].strip()
-                next = line[line.rfind("["):][1:-1]
-                if len(next) > 0:
-                    if "?" in next:
-                        next, condition = next.split("?")
-                        if len(next.strip()) > 0:
-                            self.next = next.strip()
-                        if len(condition.strip()) > 0:
-                            self.condition = condition.strip()
-                    else:
-                        self.next = next
-            else:
-                self.body = line[2:].strip()
-        if line.startswith("~"):
-            self.type = "function"
-            line = re.split("\W+", line[1:])
-            self.body = line[0]
-            self.params = line[1:]
-        else:
-            self.type = "message"
-            self.body = line.strip()
-
-    def to_json(self):
-        d = {
-            "type": self.type,
-            "body": self.body
+    def message(self, p):
+        return {
+            "type": "message",
+            "text": p[0].value[1:-1]
         }
-        if hasattr(self, "next"):
-            d["next"] = self.next
-        if hasattr(self, "params"):
-            d["params"] = self.params
-        if hasattr(self, "condition"):
-            d["condition"] = self.condition
-        return d
+    def function(self, p):
+        return {
+            "type": "function",
+            "name": p[0],
+            "params": p[1]
+        }
+    def parameters(self, p):
+        return p
+    def parameter(self, p):
+        value = p[0].value
+        try:
+            return int(value)
+        except:
+            try:
+                return float(value)
+            except:
+                return str(value)[1:-1]
+    def option(self, p):
+        result = {
+            "type": "option",
+        }
+        if len(p) > 0:
+            result["text"] = p[0][1:-1]
+        if len(p) > 1:
+            result["next"] = p[1]
+        if len(p) > 2:
+            result["condition"] = p[2]
+        return result
+    def instant(self, p):
+        result = {
+            "type": "instant",
+            "next": p[0]
+        }
+        if len(p) > 1:
+            result["condition"] = p[1]
+        return result
+    def condition(self, p):
+        return p[0].value[1:-1]
+    def identifier(self, p):
+        return p[0].value
 
+with open("grammar.lark") as f:
+    grammar = f.read()
 
-def get_states(file):
-    with open(file) as f:
-        lines = f.readlines()
-        # Remove comments
-        lines = [x[:x.index("#")] if "#" in x else x for x in lines]
-        # Remove empty lines
-        lines = [x.strip() for x in lines if len(x.strip()) > 0]
+input_file = sys.argv[1]
 
-        buffer = []
-        states = []
-        for line in lines:
-            if line.startswith("["):
-                if len(buffer) > 0:
-                    states.append(State(buffer))
-                    buffer = []
-            buffer.append(line)
-        states.append(State(buffer))
-    return states
-
-input_files = sys.argv[1:]
-for file in input_files:
-    print(json.dumps([s.to_json() for s in get_states(file)]))
+with open(input_file) as f:
+    parser = lark.Lark(grammar, start="start")
+    try:
+        tree = parser.parse(f.read())
+        print(tree)
+        print(tree.pretty())
+        print(json.dumps(Transformer().transform(tree)))
+    except Exception as e:
+        print(e)
