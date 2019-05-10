@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
+import argparse
+import glob
 import json
+import os
 import sys
+
 import lark
 
-class Transformer(lark.Transformer):
+class SprichTransformer(lark.Transformer):
     def start(self, states):
         return states
     def state(self, p):
@@ -59,17 +63,45 @@ class Transformer(lark.Transformer):
     def identifier(self, p):
         return p[0].value
 
-with open("grammar.lark") as f:
-    grammar = f.read()
 
-input_file = sys.argv[1]
+def main():
+    with open("grammar.lark") as f:
+        grammar = f.read()
 
-with open(input_file) as f:
-    parser = lark.Lark(grammar, start="start")
-    try:
-        tree = parser.parse(f.read())
-        print(tree)
-        print(tree.pretty())
-        print(json.dumps(Transformer().transform(tree)))
-    except Exception as e:
-        print(e)
+    arg_parser = argparse.ArgumentParser(description="""
+    Transform .sprich files into .json files.
+    """)
+    arg_parser.add_argument("input", help="Transform all files in this directory.")
+    arg_parser.add_argument("-o", "--output", help="Write transformed files into this directory.")
+    args = arg_parser.parse_args()
+
+    if not args.output:
+        args.output = args.input
+
+    if not os.path.isdir(args.input):
+        print(args.input + " is not a directory")
+        return
+    if not os.path.isdir(args.output):
+        print(args.output + " is not a directory")
+        return
+
+    input_files = glob.glob(args.input + "/*.sprich")
+    for input_file in input_files:
+        with open(input_file) as f:
+            parser = lark.Lark(grammar)
+            try:
+                tree = parser.parse(f.read())
+                states = SprichTransformer().transform(tree)
+                output = {
+                    "generator": "sprich",
+                    "version": "1",
+                    "states": states
+                }
+                out_filename = args.output + "/" + os.path.basename(input_file)[:-6] + "json"
+                with open(out_filename, "w") as out_f:
+                    json.dump(output, out_f)
+            except Exception as e:
+                print(e)
+
+if __name__ == "__main__":
+    main()

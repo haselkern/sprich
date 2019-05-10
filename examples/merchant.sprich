@@ -9,17 +9,17 @@
 "What do you want to buy?"
 > "Axe" [buy_axe]
 > "Sword" [buy_sword]
-> "Nothing"
+> "Nothing" [goodbye]
 
 [buy_axe]
 \take_money 1
 \give "axe"
--> purchased
+-> goodbye
 
 [buy_sword]
 \take_money 1
 \give "sword"
--> purchased
+-> goodbye
 
-[purchased]
+[goodbye]
 "Thank you for your business!"
