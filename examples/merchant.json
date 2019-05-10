@@ -1,0 +1,115 @@
+{
+    "generator": "sprich",
+    "version": "1",
+    "states": [
+        {
+            "id": "+",
+            "actions": [
+                {
+                    "type": "instant",
+                    "next": "poor",
+                    "condition": "money == 0"
+                },
+                {
+                    "type": "instant",
+                    "next": "sell"
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "poor",
+            "actions": [
+                {
+                    "type": "message",
+                    "text": "Sorry, I don't deal with poor people!"
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "sell",
+            "actions": [
+                {
+                    "type": "message",
+                    "text": "What do you want to buy?"
+                }
+            ],
+            "options": [
+                {
+                    "type": "option",
+                    "text": "Axe",
+                    "next": "buy_axe"
+                },
+                {
+                    "type": "option",
+                    "text": "Sword",
+                    "next": "buy_sword"
+                },
+                {
+                    "type": "option",
+                    "text": "Nothing",
+                    "next": "goodbye"
+                }
+            ]
+        },
+        {
+            "id": "buy_axe",
+            "actions": [
+                {
+                    "type": "function",
+                    "name": "take_money",
+                    "params": [
+                        1
+                    ]
+                },
+                {
+                    "type": "function",
+                    "name": "give",
+                    "params": [
+                        "axe"
+                    ]
+                },
+                {
+                    "type": "instant",
+                    "next": "goodbye"
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "buy_sword",
+            "actions": [
+                {
+                    "type": "function",
+                    "name": "take_money",
+                    "params": [
+                        1
+                    ]
+                },
+                {
+                    "type": "function",
+                    "name": "give",
+                    "params": [
+                        "sword"
+                    ]
+                },
+                {
+                    "type": "instant",
+                    "next": "goodbye"
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "goodbye",
+            "actions": [
+                {
+                    "type": "message",
+                    "text": "Thank you for your business!"
+                }
+            ],
+            "options": []
+        }
+    ]
+}
