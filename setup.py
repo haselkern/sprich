@@ -13,6 +13,15 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/haselkern/sprich",
     packages=setuptools.find_packages(),
+    install_requires=[
+        "lark-parser==0.7.1",
+    ],
+    setup_requires=[
+        "lark-parser==0.7.1",
+    ],
+    entry_points={
+        "console_scripts": ['sprich=sprich.sprich:main'],
+    },
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
