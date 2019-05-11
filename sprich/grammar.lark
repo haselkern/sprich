@@ -17,7 +17,7 @@ function: "\\" identifier parameters
 parameters: (_spaces parameter)*
 parameter: SIGNED_NUMBER | NUMBER | STRING | "true" | "false"
 
-instant: "->" _spaces identifier [_spaces condition]
+instant: "->" _spaces "[" identifier "]" [_spaces condition]
 
 _COMMENT: "#" /.+/
 

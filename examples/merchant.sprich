@@ -1,6 +1,6 @@
 [+]
--> poor "money == 0"
--> sell
+-> [poor] "money == 0"
+-> [sell]
 
 [poor]
 "Sorry, I don't deal with poor people!"
@@ -14,12 +14,12 @@
 [buy_axe]
 \take_money 1
 \give "axe"
--> goodbye
+-> [goodbye]
 
 [buy_sword]
 \take_money 1
 \give "sword"
--> goodbye
+-> [goodbye]
 
 [goodbye]
 "Thank you for your business!"
