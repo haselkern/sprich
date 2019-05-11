@@ -65,7 +65,7 @@ class SprichTransformer(lark.Transformer):
 
 
 def main():
-    with open("grammar.lark") as f:
+    with open(os.path.dirname(os.path.abspath(__file__)) + "/grammar.lark") as f:
         grammar = f.read()
 
     arg_parser = argparse.ArgumentParser(description="""
