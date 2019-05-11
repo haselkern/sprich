@@ -1,0 +1,56 @@
+{
+    "generator": "sprich",
+    "version": "1",
+    "states": [
+        {
+            "id": "+",
+            "actions": [
+                {
+                    "type": "instant",
+                    "next": "good",
+                    "condition": "weather == good"
+                },
+                {
+                    "type": "instant",
+                    "next": "bad",
+                    "condition": "weather == bad"
+                },
+                {
+                    "type": "instant",
+                    "next": "okay"
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "good",
+            "actions": [
+                {
+                    "type": "message",
+                    "text": "Hello! What a nice day it is."
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "bad",
+            "actions": [
+                {
+                    "type": "message",
+                    "text": "Hurry back inside, because it's raining a lot."
+                }
+            ],
+            "options": []
+        },
+        {
+            "id": "okay",
+            "actions": [
+                {
+                    "type": "message",
+                    "text": "The weather is okay, I guess."
+                }
+            ],
+            "options": []
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+[+]
+-> [good] "weather == good"
+-> [bad] "weather == bad"
+-> [okay]
+
+[good]
+"Hello! What a nice day it is."
+
+[bad]
+"Hurry back inside, because it's raining a lot."
+
+[okay]
+"The weather is okay, I guess."
