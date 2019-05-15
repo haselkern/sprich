@@ -46,8 +46,9 @@ The simplest action is a message your character should say:
 
 ### Options
 Once all actions in a state have been processed you can show options to your user.
-They define a text that should be selectable follow by an optional state and a
-condition. The option should only be selectable/visible if the condition holds true.
+They define a text that should be selectable followed by an optional state and an
+optional condition. The option should only be selectable/visible if the condition
+holds true.
 If no state is given the option ends the dialog.
 
 Conditions are always strings that your game needs to process.
